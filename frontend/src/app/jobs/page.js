@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from 'react';
 import { Briefcase, MapPin, Search, Loader2, Bookmark, BookmarkCheck, ExternalLink, Filter } from 'lucide-react';
 import AppShell from '@/components/AppShell';
 import { apiFetch } from '@/lib/api';
+import { useToast } from '@/components/Toast';
 
 export default function JobsPage() {
+  const toast = useToast();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
@@ -28,11 +30,11 @@ export default function JobsPage() {
       const data = await apiFetch(`/api/jobs${params.toString() ? `?${params}` : ''}`, { auth: false });
       setJobs(data.jobs || []);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     fetchJobs();
@@ -49,9 +51,9 @@ export default function JobsPage() {
   return (
     <AppShell>
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Find your dream job</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Sample jobs</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Browse roles, save the ones you like, and apply with your ResumeMaster resume.
+          Demo listings to practice browsing while you finish your resume. Real job board integrations are coming soon.
         </p>
       </div>
 
@@ -141,10 +143,21 @@ export default function JobsPage() {
                 </div>
 
                 <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-                  <span className="text-xs text-slate-400">{saved.length} saved</span>
-                  <button className="btn-secondary !py-2 text-xs">
-                    Apply Now <ExternalLink size={13} />
-                  </button>
+                  <span className="text-xs text-slate-400">{isSaved ? 'Saved' : 'Sample listing'}</span>
+                  {job.url ? (
+                    <a
+                      href={job.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-secondary !py-2 text-xs"
+                    >
+                      View sample <ExternalLink size={13} />
+                    </a>
+                  ) : (
+                    <button type="button" disabled className="btn-secondary !py-2 cursor-not-allowed text-xs opacity-50">
+                      No link
+                    </button>
+                  )}
                 </div>
               </div>
             );

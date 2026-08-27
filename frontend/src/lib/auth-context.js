@@ -12,20 +12,27 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = getToken();
     const cached = getUser();
-    if (token && cached) {
-      setUserState(cached);
+
+    if (!token) {
       setLoading(false);
-    } else if (token) {
-      apiFetch('/api/auth/me')
-        .then((me) => {
-          setUser(me);
-          setUserState(me);
-        })
-        .catch(() => clearToken())
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+      return;
     }
+
+    // Show cached user immediately for snappy UI, then always refresh from server
+    if (cached) {
+      setUserState(cached);
+    }
+
+    apiFetch('/api/auth/me')
+      .then((me) => {
+        setUser(me);
+        setUserState(me);
+      })
+      .catch(() => {
+        clearToken();
+        setUserState(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -62,8 +69,15 @@ export function AuthProvider({ children }) {
     setUserState(next);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const me = await apiFetch('/api/auth/me');
+    setUser(me);
+    setUserState(me);
+    return me;
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

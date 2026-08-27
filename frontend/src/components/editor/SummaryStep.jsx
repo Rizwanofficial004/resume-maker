@@ -1,4 +1,5 @@
 'use client';
+
 import { Sparkles } from 'lucide-react';
 import RichTextEditor from './RichTextEditor';
 import AIButton from './AIButton';
@@ -23,7 +24,7 @@ const SUMMARY_TEMPLATES = [
   },
 ];
 
-export default function SummaryStep({ value, onUpdate, jobTitle }) {
+export default function SummaryStep({ value, onUpdate, jobTitle, personal, experience, skills }) {
   return (
     <div>
       <div className="flex items-start justify-between">
@@ -37,10 +38,17 @@ export default function SummaryStep({ value, onUpdate, jobTitle }) {
       <div className="mt-6">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-semibold text-slate-700">Your summary</span>
-          <AIButton endpoint="summary"
-            payload={{ jobTitle: jobTitle || 'Professional', experience: '', skills: '' }}
+          <AIButton
+            endpoint="summary"
+            payload={() => ({
+              jobTitle: jobTitle || personal?.jobTitle || 'Professional',
+              personal,
+              experience: experience || [],
+              skills: skills || [],
+            })}
             label="Generate with AI"
-            onResult={(r) => onUpdate(r)} />
+            onResult={(r) => onUpdate(r)}
+          />
         </div>
         <RichTextEditor
           value={value}

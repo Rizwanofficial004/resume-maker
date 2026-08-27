@@ -3,7 +3,7 @@
 import ResumeRenderer from '@/templates';
 import { buildSampleResume } from '@/lib/sample-data';
 
-export default function ResumePreviewMock({ templateId = 'modern', accent = '#1d4ed8', scale = 0.55, className = '' }) {
+export default function ResumePreviewMock({ templateId = 'onyx', accent = '#1d4ed8', scale = 0.55, className = '' }) {
   const resume = buildSampleResume();
   const width = 210;
 

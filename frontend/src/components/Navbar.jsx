@@ -51,8 +51,8 @@ export default function Navbar({ transparent = false, hidden = false }) {
               <Link href="/account" className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-600 transition hover:bg-slate-100">
                 <Settings size={15} /> My Account
               </Link>
-              <Link href="/dashboard" className="rounded-lg bg-slate-900 px-4 py-1.5 text-[13px] font-semibold text-white transition hover:bg-slate-800">
-                <Crown size={14} className="mr-1 inline" /> Upgrade Now
+              <Link href="/account" className="rounded-lg bg-slate-900 px-4 py-1.5 text-[13px] font-semibold text-white transition hover:bg-slate-800">
+                <Crown size={14} className="mr-1 inline" /> Account
               </Link>
             </>
           ) : (

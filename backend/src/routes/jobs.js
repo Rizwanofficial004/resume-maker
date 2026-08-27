@@ -16,6 +16,7 @@ const MOCK_JOBS = [
     tags: ['React', 'TypeScript', 'Next.js'],
     description:
       'Build world-class web experiences for our product platform. Collaborate with designers and backend engineers to ship features used by millions.',
+    url: 'https://example.com/jobs/senior-frontend',
   },
   {
     id: 'j2',
@@ -29,6 +30,7 @@ const MOCK_JOBS = [
     tags: ['Node.js', 'MongoDB', 'AWS'],
     description:
       'Design and scale our API services. Work on event-driven microservices powering our B2B SaaS platform.',
+    url: 'https://example.com/jobs/backend-node',
   },
   {
     id: 'j3',
@@ -42,6 +44,7 @@ const MOCK_JOBS = [
     tags: ['Figma', 'UI/UX', 'Prototyping'],
     description:
       'Own end-to-end product design for our fintech app. Run user research, craft flows, and build a scalable design system.',
+    url: 'https://example.com/jobs/product-designer',
   },
   {
     id: 'j4',
@@ -55,6 +58,7 @@ const MOCK_JOBS = [
     tags: ['Python', 'ML', 'SQL'],
     description:
       'Build ML models that power our recommendation engine. Partner with product teams to ship data-driven features.',
+    url: 'https://example.com/jobs/data-scientist',
   },
   {
     id: 'j5',
@@ -68,6 +72,7 @@ const MOCK_JOBS = [
     tags: ['Kubernetes', 'Terraform', 'CI/CD'],
     description:
       'Own our cloud infrastructure, observability, and release pipelines. Drive reliability and developer experience.',
+    url: 'https://example.com/jobs/devops',
   },
   {
     id: 'j6',
@@ -81,6 +86,7 @@ const MOCK_JOBS = [
     tags: ['React', 'Node.js', 'PostgreSQL'],
     description:
       'Join an early-stage startup and build our core product from idea to launch. High ownership, fast iterations.',
+    url: 'https://example.com/jobs/fullstack',
   },
 ];
 

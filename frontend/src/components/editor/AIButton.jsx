@@ -4,26 +4,42 @@ import { useState } from 'react';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/auth-context';
+import { useToast } from '@/components/Toast';
 
 export default function AIButton({ endpoint, payload, label = 'Improve with AI', onResult, small = false, disabled }) {
   const { user, updateUser } = useAuth();
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
 
   const handle = async () => {
     if ((user?.aiCredits ?? 0) <= 0) {
-      alert('You have no AI credits left. Each suggestion uses one credit.');
+      toast.error('You have no AI credits left.');
       return;
     }
     setLoading(true);
     try {
+      const body = typeof payload === 'function' ? payload() : payload;
       const data = await apiFetch(`/api/ai/${endpoint}`, {
         method: 'POST',
-        body: typeof payload === 'function' ? payload() : payload,
+        body,
       });
-      updateUser({ ...user, aiCredits: (user?.aiCredits ?? 1) - 1 });
-      onResult(data.result);
+      if (typeof data.aiCredits === 'number') {
+        updateUser({ ...user, aiCredits: data.aiCredits });
+      }
+      if (typeof onResult === 'function') {
+        onResult(data.result);
+      }
     } catch (err) {
-      alert(err.message);
+      const status = err.status;
+      if (status === 402) {
+        toast.error('No AI credits left. Upgrade your plan to continue.');
+      } else if (status === 503) {
+        toast.error(err.message || 'AI is not configured. Check the API key.');
+      } else if (status === 502) {
+        toast.error(err.message || 'AI provider failed. Please try again.');
+      } else {
+        toast.error(err.message || 'AI request failed');
+      }
     } finally {
       setLoading(false);
     }
@@ -33,7 +49,7 @@ export default function AIButton({ endpoint, payload, label = 'Improve with AI',
     <button
       type="button"
       onClick={handle}
-      disabled={loading || disabled}
+      disabled={loading || disabled || (user?.aiCredits ?? 0) <= 0}
       className={`inline-flex items-center gap-1.5 rounded-lg font-semibold transition ${
         small
           ? 'px-2 py-1 text-[11px] text-brand-600 hover:bg-brand-50'

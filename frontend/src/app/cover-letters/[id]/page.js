@@ -8,10 +8,12 @@ import AppShell from '@/components/AppShell';
 import AIButton from '@/components/editor/AIButton';
 import { Field } from '@/components/editor/fields';
 import { apiFetch } from '@/lib/api';
+import { useToast } from '@/components/Toast';
 
 export default function CoverLetterEditor() {
   const params = useParams();
   const router = useRouter();
+  const toast = useToast();
   const id = params.id;
 
   const [letter, setLetter] = useState(null);
@@ -27,14 +29,14 @@ export default function CoverLetterEditor() {
         const data = await apiFetch(`/api/cover-letters/${id}`);
         setLetter(data);
       } catch (err) {
-        alert(err.message);
+        toast.error(err.message);
         router.push('/cover-letters');
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [id, router]);
+  }, [id, router, toast]);
 
   const save = useCallback(
     async (next) => {
@@ -47,12 +49,12 @@ export default function CoverLetterEditor() {
         setLetter(saved);
         setSavedAt(new Date());
       } catch (err) {
-        alert(err.message);
+        toast.error(err.message);
       } finally {
         setSaving(false);
       }
     },
-    [id]
+    [id, toast]
   );
 
   const update = (key) => (value) => {
@@ -143,6 +145,7 @@ export default function CoverLetterEditor() {
               endpoint="cover-letter"
               payload={{ recipientName: letter.recipientName, companyName: letter.companyName, jobTitle: letter.jobTitle, body: letter.body }}
               label="Generate with AI"
+              disabled={!letter.companyName?.trim() || !letter.jobTitle?.trim()}
               onResult={(r) => update('body')(r)}
             />
           </div>

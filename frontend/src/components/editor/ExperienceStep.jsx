@@ -134,14 +134,21 @@ function ExperienceCard({ item, expanded, onToggle, onUpdate, onRemove }) {
                   <ToolBtn icon={<RedoIcon />} cmd="redo" />
                 </div>
                 <AIButton endpoint="bullets"
-                  payload={() => ({ jobTitle: item.jobTitle, company: item.company, description: item.description?.map(b => b.text).filter(Boolean).join(' ') })}
+                  payload={() => ({
+                    jobTitle: item.jobTitle,
+                    company: item.company,
+                    description: item.description?.map(b => b.text).filter(Boolean).join(' '),
+                    existing: item.description?.map(b => b.text).filter(Boolean) || [],
+                  })}
                   label="Generate with AI" small
+                  disabled={!item.jobTitle && !item.company}
                   onResult={(bullets) => {
+                    const list = Array.isArray(bullets) ? bullets : [];
                     const existing = item.description?.map(b => b.text).filter(Boolean) || [];
-                    const all = [...existing, ...bullets];
-                    onUpdate('description', all.map(t => ({ text: t })));
+                    const all = [...existing, ...list.filter(Boolean)];
+                    onUpdate('description', all.length ? all.map(t => ({ text: String(t) })) : [{ text: '' }]);
                     if (editorRef.current) {
-                      editorRef.current.innerHTML = all.map(t => `<div>${t}</div>`).join('');
+                      editorRef.current.innerHTML = all.map(t => `<div>${String(t)}</div>`).join('') || '<div></div>';
                     }
                   }} />
               </div>

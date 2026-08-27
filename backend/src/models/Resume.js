@@ -9,16 +9,16 @@ const resumeSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, default: 'Untitled Resume' },
-    templateId: { type: String, default: 'modern' },
-    accentColor: { type: String, default: '#3b82f6' },
+    templateId: { type: String, default: 'onyx' },
+    accentColor: { type: String, default: '#1d4ed8' },
     fontFamily: { type: String, default: 'inter' },
     fontSize: { type: String, default: 'normal' },
-    sectionSpacing: { type: Number, default: 50 },
-    paragraphSpacing: { type: Number, default: 50 },
-    lineSpacing: { type: Number, default: 50 },
+    sectionSpacing: { type: Number, default: 16 },
+    paragraphSpacing: { type: Number, default: 8 },
+    lineSpacing: { type: Number, default: 1.5 },
     sectionOrder: {
-      left: { type: [String], default: ['contacts', 'summary', 'experience', 'education', 'awards', 'hobbies', 'custom'] },
-      right: { type: [String], default: ['websites', 'skills', 'languages', 'certifications', 'references'] },
+      left: { type: [String], default: ['experience', 'education', 'projects'] },
+      right: { type: [String], default: ['skills', 'certifications', 'languages'] },
     },
     isDefault: { type: Boolean, default: false },
 

@@ -6,6 +6,7 @@ import {
   suggestBullets,
   generateCoverLetter,
   suggestKeywords,
+  spellCheck,
 } from '../controllers/aiController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -26,5 +27,6 @@ router.post('/summary', generateSummary);
 router.post('/bullets', suggestBullets);
 router.post('/cover-letter', generateCoverLetter);
 router.post('/keywords', suggestKeywords);
+router.post('/spell-check', spellCheck);
 
 export default router;

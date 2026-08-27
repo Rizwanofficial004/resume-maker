@@ -16,6 +16,7 @@ export function setToken(token) {
 export function clearToken() {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('resumemaster_token');
+    localStorage.removeItem('resumemaster_user');
   }
 }
 
@@ -35,16 +36,27 @@ export function getUser() {
 
 export function setUser(user) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('resumemaster_user', JSON.stringify(user));
+    if (user == null) {
+      localStorage.removeItem('resumemaster_user');
+    } else {
+      localStorage.setItem('resumemaster_user', JSON.stringify(user));
+    }
   }
 }
 
-async function handleResponse(res) {
+/** Paths where a 401 means the session is invalid and should be cleared. */
+function isSessionAuthPath(path) {
+  return path === '/api/auth/me' || path.startsWith('/api/auth/me?');
+}
+
+async function handleResponse(res, path = '') {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const error = new Error(data.message || `Request failed with status ${res.status}`);
     error.status = res.status;
-    if (res.status === 401) {
+    error.code = data.code;
+    // Only wipe the session on true auth-middleware failures, not wrong-password etc.
+    if (res.status === 401 && (data.code === 'UNAUTHORIZED' || isSessionAuthPath(path))) {
       clearToken();
     }
     throw error;
@@ -65,5 +77,22 @@ export async function apiFetch(path, { method = 'GET', body, auth = true } = {})
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  return handleResponse(res);
+  return handleResponse(res, path);
+}
+
+/** Multipart upload (do not set Content-Type — browser sets boundary). */
+export async function apiUpload(path, formData, { method = 'POST', auth = true } = {}) {
+  const headers = {};
+  const token = getToken();
+  if (auth && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers,
+    body: formData,
+  });
+
+  return handleResponse(res, path);
 }

@@ -79,10 +79,10 @@ export function analyzeATS(resume, targetTitle) {
 
   push('Contact info (email & phone)', !!(p.email && p.phone), 12,
     !p.email || !p.phone ? 'Add your email and phone number.' : '');
-  push('Job title present', !!p.jobTitle.trim(), 8,
-    !p.jobTitle.trim() ? 'Add a target job title so ATS can categorize you.' : '');
-  push('Professional summary', !!p.summary.trim(), 12,
-    !p.summary.trim() ? 'Write a 3–5 sentence summary with keywords.' : '');
+  push('Job title present', !!(p.jobTitle && p.jobTitle.trim()), 8,
+    !(p.jobTitle && p.jobTitle.trim()) ? 'Add a target job title so ATS can categorize you.' : '');
+  push('Professional summary', !!(p.summary && String(p.summary).replace(/<[^>]+>/g, '').trim()), 12,
+    !(p.summary && String(p.summary).replace(/<[^>]+>/g, '').trim()) ? 'Write a 3–5 sentence summary with keywords.' : '');
   push('Work experience with bullet points', (resume.experience || []).some((e) => (e.description || []).some((b) => b.text.trim())), 15,
     'Use achievement bullets (led / increased / reduced…).');
   push('At least 1 skill listed', (resume.skills || []).some((s) => s.name.trim()), 10,

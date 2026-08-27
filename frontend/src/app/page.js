@@ -67,13 +67,13 @@ export default function Home() {
 
           <div className="relative hidden lg:block">
             <div className="absolute -left-6 top-10 z-0 rotate-[-4deg] rounded-2xl border border-white/10 bg-white/5 p-2 opacity-70">
-              <ResumePreviewMock templateId="creative" accent="#8b5cf6" scale={0.42} className="h-auto" />
+              <ResumePreviewMock templateId="chikorita" accent="#10b981" scale={0.42} className="h-auto" />
             </div>
             <div className="absolute -right-4 bottom-4 z-0 rotate-[5deg] rounded-2xl border border-white/10 bg-white/5 p-2 opacity-70">
-              <ResumePreviewMock templateId="minimal" accent="#0ea5e9" scale={0.38} className="h-auto" />
+              <ResumePreviewMock templateId="rhyhorn" accent="#0ea5e9" scale={0.38} className="h-auto" />
             </div>
             <div className="relative z-10 animate-float rounded-3xl border border-white/15 bg-white p-3 shadow-2xl shadow-brand-900/40">
-              <ResumePreviewMock templateId="modern" accent="#3369fc" scale={0.62} />
+              <ResumePreviewMock templateId="azurill" accent="#3369fc" scale={0.62} />
             </div>
             <div className="absolute -bottom-6 left-1/2 z-20 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-3 shadow-lift">
               <p className="text-sm font-semibold text-slate-900">Ready in under 5 minutes ⚡</p>
@@ -87,7 +87,7 @@ export default function Home() {
             {[
               { value: '5 min', label: 'Average resume build time' },
               { value: '48%', label: 'More likely to get interviews' },
-              { value: '40+', label: 'Professional templates' },
+              { value: '15', label: 'Professional templates' },
               { value: '100%', label: 'ATS-friendly formatting' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
@@ -108,26 +108,31 @@ export default function Home() {
               A template for every career stage
             </h2>
             <p className="mt-4 text-slate-600">
-              Choose from 40+ professional layouts designed by experts — fully customizable to your style.
+              Fifteen Reactive Resume–inspired layouts — fully customizable colors, fonts, and sections.
             </p>
           </div>
 
           <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { templateId: 'modern', accent: '#3369fc', name: 'Modern', desc: 'Two-column layout with an accent sidebar. Great for every role.' },
-              { templateId: 'classic', accent: '#1f2937', name: 'Classic', desc: 'Traditional format trusted by recruiters for decades.' },
-              { templateId: 'professional', accent: '#1e3a8a', name: 'Professional', desc: 'Formal dark header — ideal for corporate and finance roles.' },
-              { templateId: 'minimal', accent: '#2563eb', name: 'Minimal', desc: 'Ultra-clean with generous whitespace and refined type.' },
-              { templateId: 'creative', accent: '#8b5cf6', name: 'Creative', desc: 'Bold color blocks for designers and marketers.' },
-              { templateId: 'executive', accent: '#0f766e', name: 'Executive', desc: 'Elegant, powerful design for senior leadership.' },
+              { templateId: 'onyx', accent: '#1d4ed8', name: 'Onyx', desc: 'Versatile single column — our default for any role.' },
+              { templateId: 'azurill', accent: '#1d4ed8', name: 'Azurill', desc: 'Bold colored sidebar with skill bars for tech and creative.' },
+              { templateId: 'gengar', accent: '#7c3aed', name: 'Gengar', desc: 'Accent sidebar and clean type for analysts and ops.' },
+              { templateId: 'bronzor', accent: '#334155', name: 'Bronzor', desc: 'Clean two-column layout for corporate and finance.' },
+              { templateId: 'kakuna', accent: '#db2777', name: 'Kakuna', desc: 'Compact single column with a left accent bar.' },
+              { templateId: 'scizor', accent: '#dc2626', name: 'Scizor', desc: 'Uppercase headings — polished for executive roles.' },
             ].map((t) => (
               <Link
                 key={t.templateId}
                 href="/register"
                 className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-card transition-all hover:-translate-y-1 hover:shadow-lift"
               >
-                <div className="overflow-hidden rounded-xl border border-slate-100">
-                  <ResumePreviewMock templateId={t.templateId} accent={t.accent} scale={0.3} />
+                <div className="aspect-[210/297] overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/templates/jpg/${t.templateId}.jpg`}
+                    alt={`${t.name} template`}
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
                 <div className="flex items-center justify-between px-1 py-3">
                   <div>

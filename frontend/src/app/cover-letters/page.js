@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation';
 import { PenLine, Plus, Loader2, Trash2, Pencil } from 'lucide-react';
 import AppShell from '@/components/AppShell';
 import { apiFetch } from '@/lib/api';
+import { useToast } from '@/components/Toast';
 
 export default function CoverLettersPage() {
   const router = useRouter();
+  const toast = useToast();
   const [letters, setLetters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
@@ -17,11 +19,11 @@ export default function CoverLettersPage() {
       const data = await apiFetch('/api/cover-letters');
       setLetters(data);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     load();
@@ -36,7 +38,7 @@ export default function CoverLettersPage() {
       });
       router.push(`/cover-letters/${created._id}`);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
       setCreating(false);
     }
   };
@@ -46,8 +48,9 @@ export default function CoverLettersPage() {
     try {
       await apiFetch(`/api/cover-letters/${id}`, { method: 'DELETE' });
       setLetters((prev) => prev.filter((l) => l._id !== id));
+      toast.success('Cover letter deleted');
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 

@@ -1,13 +1,36 @@
 'use client';
-import { Camera } from 'lucide-react';
+
+import { useRef, useState } from 'react';
+import { Camera, Trash2 } from 'lucide-react';
 import TipsDropdown from './TipsDropdown';
-import { MuiProvider, TextField, PhoneField, SelectField } from './MuiFields';
+import { MuiProvider, TextField, PhoneField } from './MuiFields';
+import { useToast } from '@/components/Toast';
 
 const CODES = ['+92', '+1', '+44', '+91', '+61', '+49', '+33', '+81', '+86', '+971'];
+const MAX_PHOTO_BYTES = 800 * 1024;
 
 export default function ContactsStep({ resume, updatePersonal }) {
   const p = resume.personal;
+  const toast = useToast();
+  const fileRef = useRef(null);
   const upd = (k) => (e) => updatePersonal(k, typeof e === 'object' && e?.target ? e.target.value : e);
+
+  const onPhoto = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file');
+      return;
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      toast.error('Photo must be under 800KB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => updatePersonal('photo', reader.result);
+    reader.onerror = () => toast.error('Could not read image');
+    reader.readAsDataURL(file);
+  };
 
   return (
     <MuiProvider>
@@ -21,10 +44,33 @@ export default function ContactsStep({ resume, updatePersonal }) {
         </div>
 
         <div className="mt-6 flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-            <Camera size={24} />
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-slate-100 text-slate-400">
+            {p.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={p.photo} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              <Camera size={24} />
+            )}
           </div>
-          <button className="text-sm font-semibold text-blue-600 hover:text-blue-700">Upload photo</button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+            >
+              {p.photo ? 'Change photo' : 'Upload photo'}
+            </button>
+            {p.photo && (
+              <button
+                type="button"
+                onClick={() => updatePersonal('photo', '')}
+                className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-red-500"
+              >
+                <Trash2 size={14} /> Remove
+              </button>
+            )}
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
+          </div>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
@@ -49,8 +95,8 @@ export default function ContactsStep({ resume, updatePersonal }) {
           <TextField label="Email" value={p.email} onChange={upd('email')} type="email" placeholder="you@email.com" />
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <TextField label="City" value={p.city} onChange={upd('city')} placeholder="Lahore" />
-          <TextField label="Country" value={p.country} onChange={upd('country')} placeholder="Pakistan" />
+          <TextField label="City" value={p.city} onChange={upd('city')} placeholder="City" />
+          <TextField label="Country" value={p.country} onChange={upd('country')} placeholder="Country" />
         </div>
 
         <details className="mt-5 group">

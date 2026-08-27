@@ -3,16 +3,18 @@
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, FileText, PenLine, Briefcase, LogOut, Menu, X, User as UserIcon, Sparkles } from 'lucide-react';
+import { LayoutDashboard, FileText, PenLine, Briefcase, LogOut, Menu, X, Sparkles, FolderOpen, User as UserIcon } from 'lucide-react';
 import { useState } from 'react';
 import Logo from '@/components/Logo';
 import { useAuth } from '@/lib/auth-context';
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/documents', label: 'Documents', icon: FolderOpen },
   { href: '/templates', label: 'Templates', icon: FileText },
   { href: '/cover-letters', label: 'Cover Letters', icon: PenLine },
   { href: '/jobs', label: 'Find Jobs', icon: Briefcase },
+  { href: '/account', label: 'Account', icon: UserIcon },
 ];
 
 export default function AppShell({ children }) {

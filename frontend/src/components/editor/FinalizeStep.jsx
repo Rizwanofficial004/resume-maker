@@ -40,7 +40,7 @@ export default function FinalizeStep({ resume, scheduleSave }) {
   const removeCert = (id) => set('certifications', certifications.filter(c => c.id !== id));
   const updateCert = (id, k, v) => set('certifications', certifications.map(c => c.id === id ? { ...c, [k]: v } : c));
 
-  const addAward = () => set('awards', [...awards, { id: uid('award'), title: '', issuer: '', date: '', description: '' }]);
+  const addAward = () => set('awards', [...awards, { id: uid('award'), name: '', issuer: '', date: '', description: '' }]);
   const removeAward = (id) => set('awards', awards.filter(a => a.id !== id));
   const updateAward = (id, k, v) => set('awards', awards.map(a => a.id === id ? { ...a, [k]: v } : a));
 
@@ -93,7 +93,7 @@ export default function FinalizeStep({ resume, scheduleSave }) {
                 {awards.map(award => (
                   <div key={award.id} className="rounded-lg border border-slate-100 p-3 space-y-2">
                     <div className="flex items-start gap-2">
-                      <TextField label="Award title" value={award.title} onChange={v => updateAward(award.id, 'title', v)} />
+                      <TextField label="Award title" value={award.name || award.title || ''} onChange={v => updateAward(award.id, 'name', v)} />
                       <button onClick={() => removeAward(award.id)} className="mt-2.5 text-slate-400 hover:text-red-500"><Trash2 size={14} /></button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">

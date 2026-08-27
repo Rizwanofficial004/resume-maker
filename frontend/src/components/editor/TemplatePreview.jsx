@@ -195,19 +195,18 @@ const LAYOUT_PREVIEW = {
 
 // Assign colors to each template
 const COLORS = {
-  modern: '#1d4ed8', ocean: '#0369a1', forest: '#15803d', royal: '#7c3aed',
-  sunset: '#ea580c', midnight: '#1e293b', ruby: '#dc2626', emerald: '#059669',
-  arctic: '#0284c7', aurora: '#7c3aed', dusk: '#6b7280', coral: '#f43f5e',
-  teal: '#0d9488', plum: '#9333ea',
-  classic: '#1e40af', minimal: '#111827', timeless: '#1e3a5f', austere: '#374151',
-  refined: '#1e40af', pure: '#1f2937',
-  professional: '#1e293b', creative: '#7c3aed', bold: '#111827', vivid: '#2563eb',
-  rounded: '#3b82f6', sharp: '#0f172a', sleek: '#0ea5e9', executive: '#1e293b',
-  azure: '#0284c7', crimson: '#b91c1c', carbon: '#18181b',
-  harmony: '#1d4ed8', duo: '#7c3aed', atlas: '#0369a1', prism: '#059669',
-  zen: '#64748b', vertex: '#ea580c', horizon: '#0891b2', nexus: '#4f46e5',
-  'block-top': '#1d4ed8', 'block-left': '#059669', stripe: '#7c3aed',
-  wave: '#0d9488', pulse: '#dc2626',
+  modern: '#1d4ed8',
+  gengar: '#7c3aed',
+  midnight: '#0f172a',
+  arctic: '#0ea5e9',
+  classic: '#1f2937',
+  minimal: '#2563eb',
+  professional: '#1e3a8a',
+  creative: '#f43f5e',
+  executive: '#111827',
+  harmony: '#059669',
+  zen: '#64748b',
+  block: '#d97706',
 };
 
 export default function TemplatePreview({ templateId, accent, className = '' }) {

@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2, Check, ArrowRight, LayoutGrid, Sparkles, ShieldCheck, Zap } from 'lucide-react';
 import AppShell from '@/components/AppShell';
-import ResumePreviewMock from '@/components/ResumePreviewMock';
 import { apiFetch } from '@/lib/api';
+import { useToast } from '@/components/Toast';
 
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: LayoutGrid },
@@ -16,17 +17,9 @@ const CATEGORIES = [
   { id: 'executive', label: 'Executive', icon: ShieldCheck },
 ];
 
-const DEFAULT_ACCENTS = {
-  modern: '#1d4ed8',
-  classic: '#1f2937',
-  minimal: '#2563eb',
-  professional: '#1e3a8a',
-  creative: '#8b5cf6',
-  executive: '#0f766e',
-};
-
 export default function TemplatesPage() {
   const router = useRouter();
+  const toast = useToast();
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
@@ -37,30 +30,34 @@ export default function TemplatesPage() {
     apiFetch('/api/templates', { auth: false })
       .then((data) => {
         setTemplates(data);
-        setSelected(data[0]?.id || null);
+        setSelected(data.find((t) => t.id === 'onyx')?.id || data[0]?.id || null);
       })
+      .catch((err) => toast.error(err.message || 'Failed to load templates'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [toast]);
 
   const filtered = useMemo(
-    () => (filter === 'all' ? templates : templates.filter((t) => t.category === filter || t.id === filter)),
+    () => (filter === 'all' ? templates : templates.filter((t) => t.category === filter)),
     [templates, filter]
   );
+
+  const selectedMeta = templates.find((t) => t.id === selected);
 
   const createWithTemplate = async () => {
     setCreating(true);
     try {
+      const accent = selectedMeta?.accentColors?.[0] || '#1d4ed8';
       const created = await apiFetch('/api/resumes', {
         method: 'POST',
         body: {
-          title: `${templates.find((t) => t.id === selected)?.name || 'New'} Resume`,
+          title: `${selectedMeta?.name || 'New'} Resume`,
           templateId: selected,
-          accentColor: DEFAULT_ACCENTS[selected] || '#1d4ed8',
+          accentColor: accent,
         },
       });
       router.push(`/editor/${created._id}`);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
       setCreating(false);
     }
   };
@@ -70,17 +67,21 @@ export default function TemplatesPage() {
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">Choose a template</h1>
         <p className="text-sm text-slate-500">
-          Pick a starting point — you can customize colors, fonts, and content in the editor.
+          Reactive Resume–inspired layouts powered by the template engine — or{' '}
+          <Link href="/templates/studio" className="font-semibold text-blue-600 hover:text-blue-700">
+            create your own
+          </Link>
+          .
         </p>
       </div>
 
-      {/* Category filters */}
       <div className="mt-6 flex flex-wrap gap-2">
         {CATEGORIES.map(({ id, label, icon: Icon }) => {
           const active = filter === id;
           return (
             <button
               key={id}
+              type="button"
               onClick={() => setFilter(id)}
               className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
                 active
@@ -106,6 +107,7 @@ export default function TemplatesPage() {
               return (
                 <button
                   key={t.id}
+                  type="button"
                   onClick={() => setSelected(t.id)}
                   className={`relative rounded-2xl border bg-white p-4 text-left shadow-card transition-all hover:-translate-y-1 hover:shadow-lift ${
                     active ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-slate-200'
@@ -116,13 +118,18 @@ export default function TemplatesPage() {
                       <Check size={15} strokeWidth={3} />
                     </span>
                   )}
-                  <div className="overflow-hidden rounded-xl border border-slate-100">
-                    <ResumePreviewMock templateId={t.id} accent={DEFAULT_ACCENTS[t.id]} scale={0.3} />
+                  <div className="aspect-[210/297] overflow-hidden rounded-xl border border-slate-100 bg-slate-50">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={t.preview || `/templates/jpg/${t.id}.jpg`}
+                      alt={`${t.name} template preview`}
+                      className="h-full w-full object-cover object-top"
+                    />
                   </div>
                   <div className="px-1 pt-3">
                     <h3 className="font-semibold text-slate-900">{t.name}</h3>
                     <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{t.description}</p>
-                    <span className="mt-2 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 capitalize">
+                    <span className="mt-2 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-500">
                       {t.category || 'modern'}
                     </span>
                   </div>
@@ -135,9 +142,22 @@ export default function TemplatesPage() {
             <div className="mt-8 text-center text-sm text-slate-400">No templates in this category yet.</div>
           )}
 
-          <div className="mt-10 flex justify-end">
-            <button onClick={createWithTemplate} disabled={!selected || creating} className="btn-primary px-7 py-3 text-base">
-              {creating ? <Loader2 size={18} className="animate-spin" /> : (
+          <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href="/templates/studio"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-300 hover:text-blue-700"
+            >
+              <Sparkles size={16} /> Create custom template
+            </Link>
+            <button
+              type="button"
+              onClick={createWithTemplate}
+              disabled={!selected || creating}
+              className="btn-primary px-7 py-3 text-base"
+            >
+              {creating ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
                 <>
                   Use This Template <ArrowRight size={18} />
                 </>

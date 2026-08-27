@@ -60,8 +60,13 @@ export default function EducationStep({ items = [], setItems }) {
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-sm font-semibold text-slate-700">Description</span>
                       <AIButton endpoint="improve"
-                        payload={{ text: item.description || '', context: `Education at ${item.school}, ${item.degree} in ${item.fieldOfStudy}` }}
-                        small label="Generate with AI"
+                        payload={() => ({
+                          text: (item.description || '').replace(/<[^>]+>/g, '').trim()
+                            || `Highlights for ${item.degree || 'degree'} in ${item.fieldOfStudy || 'studies'} at ${item.school || 'university'}`,
+                          context: `Education at ${item.school || 'school'}, ${item.degree || ''} in ${item.fieldOfStudy || ''}`,
+                        })}
+                        small
+                        label={item.description?.replace(/<[^>]+>/g, '').trim() ? 'Improve with AI' : 'Generate with AI'}
                         onResult={(r) => update(item.id, 'description', r)} />
                     </div>
                     <RichTextEditor
